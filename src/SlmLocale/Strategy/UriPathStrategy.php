@@ -107,7 +107,7 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
 
     public function detect(LocaleEvent $event)
     {
-        echo 'detect()';
+
         $request = $event->getRequest();
         if (!$this->isHttpRequest($request)) {
             return;
@@ -118,13 +118,19 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
 
         $aliases = $this->getAliases();
 
-        if (!$locale && !$event->getAssembleDefault() && $event->getDefaultLocale()) {
+        if ((!$locale || !in_array($locale, $event->getSupported()))
+            && !$event->getAssembleDefault() && $event->getDefaultLocale()) {
             // Ther is no locale part in URI, but default locale is used w/o it
             $defaultLocale = $event->getDefaultLocale();
             $locale = $defaultLocale;
         } elseif (!$locale) {
             return;
         }
+
+        if (!$locale) {
+            return;
+        }
+
 
         if (null !== $aliases && array_key_exists($locale, $aliases)) {
             $locale = $aliases[$locale];
@@ -139,7 +145,7 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
 
     public function found(LocaleEvent $event)
     {
-echo 'found()';
+
         $request = $event->getRequest();
         if (!$this->isHttpRequest($request)) {
             return;
@@ -150,6 +156,7 @@ echo 'found()';
         if (null === $locale) {
             return;
         }
+
 
         if (!$this->redirectToCanonical() && null !== $this->getAliases()) {
             $alias = $this->getAliasForLocale($locale);
