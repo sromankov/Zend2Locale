@@ -56,6 +56,8 @@ class LocaleEvent extends Event
     protected $supported;
     protected $locale;
     protected $uri;
+    protected $assembleDefault;
+    protected $defaultLocale;
 
     public function getRequest()
     {
@@ -96,6 +98,30 @@ class LocaleEvent extends Event
     public function hasSupported()
     {
         return is_array($this->supported) && count($this->supported);
+    }
+
+    public function getAssembleDefault()
+    {
+        return $this->assembleDefault;
+    }
+
+    public function setAssembleDefault($assembleDefault)
+    {
+        $this->setParam('assembleDefault', $assembleDefault);
+        $this->assembleDefault = $assembleDefault;
+        return $this;
+    }
+
+    public function getDefaultLocale()
+    {
+        return $this->defaultLocale;
+    }
+
+    public function setDefaultLocale($defaultLocale)
+    {
+        $this->setParam('defaultLocale', $defaultLocale);
+        $this->defaultLocale = $defaultLocale;
+        return $this;
     }
 
     public function getLocale()

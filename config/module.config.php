@@ -40,7 +40,8 @@
 
 return array(
     'slm_locale' => array(
-        'strategies' => array()
+        'strategies' => array(),
+        'assembleDefault' => true
     ),
 
     'service_manager' => array(

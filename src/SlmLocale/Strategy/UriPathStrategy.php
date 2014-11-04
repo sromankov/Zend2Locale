@@ -107,6 +107,7 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
 
     public function detect(LocaleEvent $event)
     {
+        echo 'detect()';
         $request = $event->getRequest();
         if (!$this->isHttpRequest($request)) {
             return;
@@ -114,11 +115,17 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
 
         $base   = $this->getBasePath();
         $locale = $this->getFirstSegmentInPath($request->getUri(), $base);
-        if (!$locale) {
+
+        $aliases = $this->getAliases();
+
+        if (!$locale && !$event->getAssembleDefault() && $event->getDefaultLocale()) {
+            // Ther is no locale part in URI, but default locale is used w/o it
+            $defaultLocale = $event->getDefaultLocale();
+            $locale = $defaultLocale;
+        } elseif (!$locale) {
             return;
         }
 
-        $aliases = $this->getAliases();
         if (null !== $aliases && array_key_exists($locale, $aliases)) {
             $locale = $aliases[$locale];
         }
@@ -132,12 +139,14 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
 
     public function found(LocaleEvent $event)
     {
+echo 'found()';
         $request = $event->getRequest();
         if (!$this->isHttpRequest($request)) {
             return;
         }
 
         $locale = $event->getLocale();
+
         if (null === $locale) {
             return;
         }
@@ -150,10 +159,26 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
         }
 
 
+        if ($event->getDefaultLocale() && ($event->getDefaultLocale()  == $locale)) {
+            $isDefaultLocale = true;
+        } else {
+            $isDefaultLocale = false;
+        }
+//        echo $this->getAliasForLocale($locale) . '-'
+//            . $this->getAliasForLocale($event->getDefaultLocale())
+//            . '-' . $event->getDefaultLocale();
+
+
         $base  = $this->getBasePath();
         $found = $this->getFirstSegmentInPath($request->getUri(), $base);
 
-        $this->getRouter()->setBaseUrl($base . '/' . $locale);
+        if (!(!$event->getAssembleDefault() && $isDefaultLocale)) {
+            $this->getRouter()->setBaseUrl($base . '/' . $locale);
+        }
+
+//        $this->getRouter()->setBaseUrl($base . '/' . $locale);
+
+
         if ($locale === $found) {
             return;
         }
@@ -161,6 +186,8 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
         if (!$this->redirectWhenFound()) {
             return;
         }
+
+
 
         $uri  = $request->getUri();
         $path = $uri->getPath();
@@ -170,6 +197,12 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
         } else {
             $path = str_replace($found, $locale, $path);
         }
+
+
+        if ((!$event->getAssembleDefault() && $isDefaultLocale)) {
+            return;
+        }
+
 
         $uri->setPath($path);
 

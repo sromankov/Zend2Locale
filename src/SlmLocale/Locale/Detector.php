@@ -65,6 +65,13 @@ class Detector implements EventManagerAwareInterface
     protected $default;
 
     /**
+     * whether to include locale part into the uri for the default language
+     *
+     * @var boolean
+     */
+    protected $assembleDefault = true;
+
+    /**
      * Optional list of supported locales
      *
      * @var array
@@ -103,6 +110,17 @@ class Detector implements EventManagerAwareInterface
         return $this;
     }
 
+    public function getAssembleDefault()
+    {
+        return $this->assembleDefault;
+    }
+
+    public function setAssembleDefault($assembleDefault)
+    {
+        $this->assembleDefault = $assembleDefault;
+        return $this;
+    }
+
     public function getSupported()
     {
         return $this->supported;
@@ -127,6 +145,15 @@ class Detector implements EventManagerAwareInterface
 
         if ($this->hasSupported()) {
             $event->setSupported($this->getSupported());
+        }
+
+
+        if ($this->getAssembleDefault()) {
+            $event->setAssembleDefault($this->getAssembleDefault());
+        }
+
+        if ($this->getDefault()) {
+            $event->setDefaultLocale($this->getDefault());
         }
 
         $events  = $this->getEventManager();

@@ -69,6 +69,10 @@ class DetectorFactory implements FactoryInterface
             $detector->setSupported($config['supported']);
         }
 
+        if (array_key_exists('assembleDefault', $config)) {
+            $detector->setAssembleDefault($config['assembleDefault']);
+        }
+
         return $detector;
     }
 

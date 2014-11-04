@@ -16,6 +16,13 @@ $settings = array(
     //'default' => 'nl-NL',
 
     /**
+     * whether to include locale part into the uri for the default language
+     *
+     * Accepted is something else
+     */
+    // assembleDefault => true,
+
+    /**
      * Supported locales
      *
      * Some good description here. Default is something
