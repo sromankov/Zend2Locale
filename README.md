@@ -1,37 +1,27 @@
-SlmLocale
+Zend2Locale (SlmLocale fork)
 ===
-[![Build Status](https://travis-ci.org/juriansluiman/SlmLocale.png)](https://travis-ci.org/juriansluiman/SlmLocale)
-[![Latest Stable Version](https://poser.pugx.org/slm/locale/v/stable.png)](https://packagist.org/packages/slm/locale)
 
 Created by Jurian Sluiman
+Forked by Sergii Romankov
 
 Introduction
 ------------
-SlmLocale is a Zend Framework 2 module to automatically detect a locale for your
+SlmLocale (Zend2Locale) is a Zend Framework 2 module to automatically detect a locale for your
 application. It uses a variety of pluggable strategies to search for a valid
 locale. SlmLocale features a default locale, a set of supported locales and
 locale aliases.
+...
+An additional information is here https://github.com/juriansluiman/SlmLocale
 
-SlmLocale supports out of the box several strategies to search for a locale.
-Through interfaces, other strategies could be created. The set of default
-stragies is:
+This is a forked version of the Jurian Sluiman's module SlmLocale.
 
- 1. The HTTP `Accept-Language` header
- 2. A cookie to store the locale between several sessions of one visitor
- 3. A query parameter to easily switch from locale
- 4. The first segment of the path of an uri
- 5. A part of the domain name (either the TLD or a subdomain)
-
-Furthermore, it provides a set of additional localisation features:
-
- 1. A default locale, used as fallback
- 2. A set of aliases, so you can map `.com` as "en-US" in the host name strategy
- 3. Redirect to the right domain/path when a locale is found
- 4. View helpers to create a localised uri or a list of language switches
+Changes list:
+ 1. An additional module setup parameter assembleDefault (default value is true) that allows
+ to include/exclude  locale part from the URI for the UriPathStrategy strategy
 
 Installation
 ---
-Add "slm/locale" to your composer.json file and update your dependencies. Enable
+Modify your composer.json file and update your dependencies. Enable
 SlmLocale in your `application.config.php`.
 
 If you do not have a composer.json file in the root of your project, copy the
@@ -41,8 +31,14 @@ the root of your project:
 ```
 {
     "require": {
-        "slm/locale": ">=0.1.0,<1.2.0-dev"
-    }
+        "rs/zend2locale": "@dev"
+    },
+    "repositories": [
+            {
+                "type": "vcs",
+                "url": "https://github.com/sromankov/zend2locale"
+            }
+        ]
 }
 ```
 
@@ -52,10 +48,6 @@ Then execute the following commands in a CLI:
 curl -s http://getcomposer.org/installer | php
 php composer.phar install
 ```
-
-Now you should have a `vendor` directory, including a `slm/locale`. In your
-bootstrap code, make sure you include the `vendor/autoload.php` file to properly
-load the SlmLocale module.
 
 Usage
 ---
@@ -72,6 +64,14 @@ Set all your supported locales in the configuration:
 ```
 'slm_locale' => array(
     'supported' => array('en-US', 'en-GB'),
+),
+```
+
+If you want to exclude locale URI part for the default language, set assembleDefault to "false":
+
+```
+'slm_locale' => array(
+    'assembleDefault' => false,
 ),
 ```
 
